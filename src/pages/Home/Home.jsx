@@ -83,7 +83,7 @@ const Home = () => {
                 key={item.id}
                 className={`${
                   item.id === 122 ? "hidden" : ""
-                } ${itemActive === item.id ? "border-b-4 border-primary" : ""} pb-4 text-center transition-all duration-200`}
+                } ${itemActive === item.id ? "border-b-4 border-primary" : ""} pb-4 text-center transition-all duration-200 cursor-pointer`}
                 onClick={() => setItemActive(item.id)}
               >
                 <p className="text-lg font-medium">{item.name}</p>
