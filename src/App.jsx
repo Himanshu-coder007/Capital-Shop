@@ -1,10 +1,21 @@
-import { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header/Header";
 import Loader from "./components/Loader/Loader";
 import Footer from "./components/Footer/Footer";
+
+// ScrollToTop component
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 // Lazy-loaded components
 const Home = lazy(() => import("./pages/Home/Home"));
@@ -40,6 +51,7 @@ function App() {
         />
         
         <Header />
+        <ScrollToTop /> {/* Add ScrollToTop component here */}
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
