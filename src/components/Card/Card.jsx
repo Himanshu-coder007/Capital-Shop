@@ -1,19 +1,49 @@
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { getLoginSuccess } from "../../redux/selectors";
+import CartSlice from "../Cart/CartSlice";
 
-const Card = ({ product }) => {
+const Card = (props) => {
+  const dispatch = useDispatch();
+  const LoginSuccess = useSelector(getLoginSuccess);
+  
+  const handleAddCartClick = () => {
+    if (LoginSuccess === "true") {
+      dispatch(
+        CartSlice.actions.addCart({
+          id: props.product.id.toString(),
+          quantity: 1,
+        })
+      );
+      toast.success("Add to cart successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } else {
+      toast.error("Please login or register account to perform this action.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
   return (
     <div className="rounded p-4 shadow-xl group overflow-hidden cursor-pointer">
       <div className="max-w-full overflow-hidden relative">
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${props.product.id}`}>
           <img
-            src={product.images[0]}
-            alt={product.description}
+            src={props.product.images[0]}
+            alt={props.product.description}
             className="max-w-[100%] min-h-[216px] group-hover:scale-110 transition-all duration-700"
           />
         </Link>
         <div className="absolute translate-y-[999px] group-hover:translate-y-0 w-full bg-transparent bottom-0 px-[30%] py-3 transition-all duration-500 ease-out">
           <div className="bg-white grid grid-cols-2">
-            <div className="grid-cols-1 p-2 flex items-center justify-center border-r border-gray-300 hover:text-white hover:bg-primary transition-all duration-500">
+            <div
+              onClick={handleAddCartClick}
+              className="grid-cols-1 p-2 flex items-center justify-center border-r border-gray-300 hover:text-white hover:bg-primary transition-all duration-500"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -49,12 +79,12 @@ const Card = ({ product }) => {
         </div>
       </div>
       <div className="py-6">
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${props.product.id}`}>
           <p className="text-lg text-black group-hover:text-primary text-center pt-4 pb-2 transition-all duration-500">
-            {product.title}
+            {props.product.title}
           </p>
           <p className="text-gray-400 font-medium text-center group-hover:text-gray-800 transition-all duration-500">
-            {"$" + product.price}
+            {"$" + props.product.price}
           </p>
         </Link>
       </div>
