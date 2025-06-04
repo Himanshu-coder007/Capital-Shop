@@ -81,9 +81,8 @@ function App() {
             />
           </Routes>
         </main>
-        <Suspense fallback={null}>
-          <Footer />
-        </Suspense>
+        {/* Remove Suspense from Footer to prevent layout issues */}
+        <Footer />
       </div>
     </Router>
   );
