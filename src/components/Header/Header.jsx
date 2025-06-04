@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/images/logo.png";
 
-const Category = [
+export const Category = [
   {
     id: 118,
     name: "Clothes",
