@@ -1,6 +1,9 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/images/logo.png";
+import AccountSlice from "../../pages/Login/AccountSlice";
+import { getLoginSuccess, quantityItem } from "../../redux/selectors";
 
 export const Category = [
   {
@@ -31,9 +34,9 @@ export const Category = [
 ];
 
 const Header = () => {
-  // Mock data since we're not using Redux
-  const quantity = 0;
-  const LoginSuccess = false;
+  const quantity = useSelector(quantityItem);
+  const LoginSuccess = useSelector(getLoginSuccess);
+  const dispatch = useDispatch();
 
   return (
     <div className="font-jost">
@@ -108,11 +111,17 @@ const Header = () => {
                 />
               </svg>
             </Link>
-            {LoginSuccess && (
-              <div className="hidden transition-all group-hover:block absolute border shadow-custom p-3 z-50 bg-white left-[-100%] rounded-lg">
+            {LoginSuccess === "true" ? (
+              <div
+                onClick={() => {
+                  localStorage.setItem("loginSuccess", "false");
+                  dispatch(AccountSlice.actions.Logout());
+                }}
+                className="hidden transition-all group-hover:block absolute border shadow-custom p-3 z-50 bg-white left-[-100%] rounded-lg"
+              >
                 <p className="hover:text-orange-500 cursor-pointer">Logout</p>
               </div>
-            )}
+            ) : null}
           </div>
 
           <Link to="/cart" className="relative ml-1 md:p-4">

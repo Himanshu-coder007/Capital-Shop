@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header/Header";
 import Loader from "./components/Loader/Loader";
+import Footer from "./components/Footer/Footer";
 
 // Lazy-loaded components
 const Home = lazy(() => import("./pages/Home/Home"));
@@ -12,20 +13,19 @@ const Category = lazy(() => import("./pages/Category/Category"));
 const ProductDetail = lazy(() => import("./pages/Product Details/ProductDetail"));
 const Register = lazy(() => import("./pages/Login/Register"));
 const Login = lazy(() => import("./pages/Login/Login"));
-const Footer = lazy(() => import("./components/Footer/Footer"));
 
 function App() {
-  const RequireLogin = ({ children }) => {
-    if (localStorage.getItem("loginSuccess") === "true") {
-      return <Navigate to="/home" />;
-    }
-    return children;
+  const RequireAuth = ({ children }) => {
+    return localStorage.getItem("loginSuccess") === "true" ? children : <Navigate to="/login" />;
+  };
+
+  const RequireNoAuth = ({ children }) => {
+    return localStorage.getItem("loginSuccess") === "true" ? <Navigate to="/home" /> : children;
   };
 
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
-        {/* Toast Container - should be near the root of your app */}
         <ToastContainer
           position="top-right"
           autoClose={3000}
@@ -43,6 +43,8 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
+            
+            {/* Public routes */}
             <Route
               path="/home"
               element={
@@ -67,13 +69,15 @@ function App() {
                 </Suspense>
               }
             />
+            
+            {/* Authentication routes */}
             <Route
               path="/login"
               element={
                 <Suspense fallback={<Loader />}>
-                  <RequireLogin>
+                  <RequireNoAuth>
                     <Login />
-                  </RequireLogin>
+                  </RequireNoAuth>
                 </Suspense>
               }
             />
@@ -81,17 +85,21 @@ function App() {
               path="/register"
               element={
                 <Suspense fallback={<Loader />}>
-                  <RequireLogin>
+                  <RequireNoAuth>
                     <Register />
-                  </RequireLogin>
+                  </RequireNoAuth>
                 </Suspense>
               }
             />
+            
+            {/* Protected routes */}
             <Route
               path="/cart"
               element={
                 <Suspense fallback={<Loader />}>
-                  <Cart />
+                  <RequireAuth>
+                    <Cart />
+                  </RequireAuth>
                 </Suspense>
               }
             />
