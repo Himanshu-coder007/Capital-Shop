@@ -1,5 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header/Header";
 import Loader from "./components/Loader/Loader";
 
@@ -23,6 +25,20 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
+        {/* Toast Container - should be near the root of your app */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        
         <Header />
         <main className="flex-grow">
           <Routes>
@@ -81,7 +97,6 @@ function App() {
             />
           </Routes>
         </main>
-        {/* Remove Suspense from Footer to prevent layout issues */}
         <Footer />
       </div>
     </Router>
