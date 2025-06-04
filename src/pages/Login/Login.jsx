@@ -48,29 +48,34 @@ const Login = () => {
   });
 
   return (
-    <div className="w-full">
-      <div className="px-2 md:px-40 py-6 md:py-20 font-jost">
-        <div className="shadow-2xl px-10 py-20 md:max-w-[60%]  flex flex-col m-auto">
-          <p className="text-center text-3xl font-semibold">Login</p>
-          <p className=" text-center text-base font-normal mt-5">
-            Enter Login details to get access
-          </p>
-          <form onSubmit={formik.handleSubmit} className="mt-10 flex flex-col">
-            <label htmlFor="account" className="text-base font-medium">
-              Username Or Email Address
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-center">
+          <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
+          <p className="text-indigo-100 mt-2">Enter your credentials to access your account</p>
+        </div>
+        
+        <form onSubmit={formik.handleSubmit} className="p-8 space-y-6">
+          <div>
+            <label htmlFor="account" className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
             </label>
             <input
               id="account"
-              type="text"
+              type="email"
               value={formik.values.account}
               onChange={formik.handleChange}
-              className="border-gray-500 mt-4"
-              placeholder="Username / Email address"
+              onBlur={formik.handleBlur}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+              placeholder="your@email.com"
             />
             {formik.errors.account && formik.touched.account && (
-              <p className="text-red-600 text-base">{formik.errors.account}</p>
+              <p className="mt-1 text-sm text-red-600">{formik.errors.account}</p>
             )}
-            <label htmlFor="password" className="text-base font-medium mt-6">
+          </div>
+          
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
@@ -78,30 +83,47 @@ const Login = () => {
               type="password"
               value={formik.values.password}
               onChange={formik.handleChange}
-              placeholder="Password"
-              className=" mt-4"
+              onBlur={formik.handleBlur}
+              placeholder="••••••••"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
             />
             {formik.errors.password && formik.touched.password && (
-              <p className="text-red-600 text-base">{formik.errors.password}</p>
+              <p className="mt-1 text-sm text-red-600">{formik.errors.password}</p>
             )}
-            <div className="flex items-center mt-14 justify-between">
-              <p className=" text-base font-normal">
-                Don't have an account?{" "}
-                <Link to="/register" className="text-primary">
-                  {" "}
-                  Sign Up
-                </Link>{" "}
-                here
-              </p>
-              <button
-                type="submit"
-                className="px-6 py-3 rounded-md bg-primary cursor-pointer text-white "
-              >
-                Login
-              </button>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                Remember me
+              </label>
             </div>
-          </form>
-        </div>
+            
+            <Link to="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
+              Forgot password?
+            </Link>
+          </div>
+          
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 shadow-md"
+          >
+            Sign in
+          </button>
+          
+          <div className="text-center text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+              Sign up
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );
