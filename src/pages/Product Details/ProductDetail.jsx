@@ -1,8 +1,10 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams, Link } from "react-router-dom";
 import axiosClient from "../../apis/axiosClient";
 import CartSlice from "../../components/Cart/CartSlice";
+import { toast } from "react-toastify";
+import { getLoginSuccess } from "../../redux/selectors";
 
 const tablist = [
   {
@@ -26,6 +28,7 @@ const tablist = [
 const ProductDetail = () => {
   document.title = "Capitl Shop - ProductDetail";
   const dispatch = useDispatch();
+  const LoginSuccess = useSelector(getLoginSuccess);
   const [itemActive, setItemActive] = useState(1);
   const [product, setProduct] = useState({
     id: 1,
@@ -40,14 +43,62 @@ const ProductDetail = () => {
     brand: "",
   });
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+
+  // Check if product is liked on component mount
+  useEffect(() => {
+    const likedProducts = JSON.parse(localStorage.getItem("likedProducts") || "[]");
+    setIsLiked(likedProducts.includes(product.id));
+  }, [product.id]);
 
   const handleAddCartClick = () => {
-    dispatch(
-      CartSlice.actions.addCart({
-        id: product.id.toString(),
-        quantity: 1,
-      })
-    );
+    if (LoginSuccess === "true") {
+      dispatch(
+        CartSlice.actions.addCart({
+          id: product.id.toString(),
+          quantity: 1,
+        })
+      );
+      toast.success("Added to cart successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } else {
+      toast.error("Please login or register account to perform this action.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleLikeClick = () => {
+    if (LoginSuccess !== "true") {
+      toast.error("Please login or register account to perform this action.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    const likedProducts = JSON.parse(localStorage.getItem("likedProducts") || "[]");
+    let updatedLikedProducts;
+
+    if (isLiked) {
+      updatedLikedProducts = likedProducts.filter(id => id !== product.id);
+      toast.info("Removed from favorites", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } else {
+      updatedLikedProducts = [...likedProducts, product.id];
+      toast.success("Added to favorites!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+
+    localStorage.setItem("likedProducts", JSON.stringify(updatedLikedProducts));
+    setIsLiked(!isLiked);
   };
 
   const location = useLocation();
@@ -209,7 +260,7 @@ const ProductDetail = () => {
       <div className="bg-[#F3EAD8] py-12 flex items-center justify-center flex-col">
         <h1 className="text-4xl font-bold text-gray-800">Product Details</h1>
         <div className="flex mt-4">
-          <Link to="/" className="text-[#74706B] text-sm hover:text-primary transition">
+          <Link to="/" className="text-[#74706B] text-sm hover:text-primary transition cursor-pointer">
             Home
           </Link>
           <span className="mx-2 text-[#74706B]">/</span>
@@ -223,19 +274,40 @@ const ProductDetail = () => {
           <div className="md:flex">
             {/* Product Images */}
             <div className="md:w-1/2 p-6">
-              <div className="h-96 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden mb-4">
+              <div className="h-96 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden mb-4 relative">
                 <img
                   src={product.images[selectedImage] || "https://via.placeholder.com/600"}
                   alt={product.title}
                   className="h-full w-full object-contain"
                 />
+                <button
+                  onClick={handleLikeClick}
+                  className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill={isLiked ? "red" : "none"}
+                    viewBox="0 0 24 24"
+                    stroke={isLiked ? "red" : "currentColor"}
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                </button>
               </div>
               <div className="flex space-x-2 overflow-x-auto pb-2">
                 {product.images.map((img, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 ${selectedImage === index ? 'border-primary' : 'border-transparent'}`}
+                    className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 cursor-pointer ${
+                      selectedImage === index ? 'border-primary' : 'border-transparent'
+                    }`}
                   >
                     <img
                       src={img || "https://via.placeholder.com/100"}
@@ -254,8 +326,10 @@ const ProductDetail = () => {
                   <h2 className="text-2xl font-bold text-gray-800">{product.title}</h2>
                   <p className="text-gray-500 text-sm mt-1">{product.category?.name}</p>
                 </div>
-                <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                  In Stock
+                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded ${
+                  product.stock > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                }`}>
+                  {product.stock > 0 ? "In Stock" : "Out of Stock"}
                 </span>
               </div>
 
@@ -279,10 +353,15 @@ const ProductDetail = () => {
 
               <p className="text-gray-700 mt-4">{product.description}</p>
 
-              <div className="mt-6">
+              <div className="mt-6 space-y-4">
                 <button
                   onClick={handleAddCartClick}
-                  className="w-full bg-primary hover:bg-primary-dark text-white py-3 px-6 rounded-lg font-medium transition duration-300 flex items-center justify-center"
+                  disabled={product.stock <= 0}
+                  className={`w-full py-3 px-6 rounded-lg font-medium transition duration-300 flex items-center justify-center ${
+                    product.stock > 0
+                      ? "bg-[#4F46E5] hover:bg-[#4338CA] text-white cursor-pointer"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -292,7 +371,31 @@ const ProductDetail = () => {
                   >
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
                   </svg>
-                  Add to Cart
+                  {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
+                </button>
+                <button
+                  onClick={handleLikeClick}
+                  className={`w-full py-3 px-6 rounded-lg font-medium transition duration-300 flex items-center justify-center border ${
+                    isLiked
+                      ? "bg-red-50 border-red-200 text-red-600 hover:bg-red-100 cursor-pointer"
+                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    fill={isLiked ? "red" : "none"}
+                    viewBox="0 0 24 24"
+                    stroke={isLiked ? "red" : "currentColor"}
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                  {isLiked ? "Added to Favorites" : "Add to Favorites"}
                 </button>
               </div>
 
@@ -346,7 +449,7 @@ const ProductDetail = () => {
                     itemActive === item.id
                       ? "border-primary text-primary"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm`}
+                  } whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm cursor-pointer`}
                 >
                   {item.name}
                 </button>
