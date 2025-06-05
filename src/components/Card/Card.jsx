@@ -3,11 +3,19 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getLoginSuccess } from "../../redux/selectors";
 import CartSlice from "../Cart/CartSlice";
+import { useEffect, useState } from "react";
 
 const Card = (props) => {
   const dispatch = useDispatch();
   const LoginSuccess = useSelector(getLoginSuccess);
-  
+  const [isLiked, setIsLiked] = useState(false);
+
+  // Check if product is liked on component mount
+  useEffect(() => {
+    const likedProducts = JSON.parse(localStorage.getItem("likedProducts") || "[]");
+    setIsLiked(likedProducts.includes(props.product.id));
+  }, [props.product.id]);
+
   const handleAddCartClick = () => {
     if (LoginSuccess === "true") {
       dispatch(
@@ -26,6 +34,36 @@ const Card = (props) => {
         autoClose: 3000,
       });
     }
+  };
+
+  const handleLikeClick = () => {
+    if (LoginSuccess !== "true") {
+      toast.error("Please login or register account to perform this action.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    const likedProducts = JSON.parse(localStorage.getItem("likedProducts") || "[]");
+    let updatedLikedProducts;
+
+    if (isLiked) {
+      updatedLikedProducts = likedProducts.filter(id => id !== props.product.id);
+      toast.info("Removed from favorites", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } else {
+      updatedLikedProducts = [...likedProducts, props.product.id];
+      toast.success("Added to favorites!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+
+    localStorage.setItem("likedProducts", JSON.stringify(updatedLikedProducts));
+    setIsLiked(!isLiked);
   };
 
   return (
@@ -59,13 +97,16 @@ const Card = (props) => {
                 />
               </svg>
             </div>
-            <div className="grid-cols-1 p-2 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-500">
+            <div 
+              onClick={handleLikeClick}
+              className="grid-cols-1 p-2 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-500"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
-                fill="none"
+                fill={isLiked ? "red" : "none"}
                 viewBox="0 0 24 24"
-                stroke="currentColor"
+                stroke={isLiked ? "red" : "currentColor"}
                 strokeWidth={2}
               >
                 <path
