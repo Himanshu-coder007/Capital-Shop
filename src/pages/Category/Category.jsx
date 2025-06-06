@@ -10,6 +10,11 @@ const CategoryPage = () => {
   const [fromMoney, setFromMoney] = useState("0");
   const [toMoney, setToMoney] = useState("");
   const [category, setCategory] = useState("1"); // Initialize with default value
+  const [appliedFilters, setAppliedFilters] = useState({
+    category: "1",
+    fromMoney: "0",
+    toMoney: ""
+  });
   const [reloadData, setReloadData] = useState(0);
   const [categories, setCategories] = useState([
     { id: 1, name: "Clothes" },
@@ -29,6 +34,7 @@ const CategoryPage = () => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(true);
+  const [allProducts, setAllProducts] = useState([]);
   const location = useLocation();
 
   useLayoutEffect(() => {
@@ -39,6 +45,10 @@ const CategoryPage = () => {
     // Set the initial category based on URL param or default
     const initialCategory = id || "1";
     setCategory(initialCategory);
+    setAppliedFilters(prev => ({
+      ...prev,
+      category: initialCategory
+    }));
     
     // Only trigger reload if the stored value is different
     if (localStorage.getItem("test") !== initialCategory) {
@@ -51,11 +61,14 @@ const CategoryPage = () => {
     const getData = async () => {
       setIsLoading(true);
       try {
-        const res = await axiosClient.get(`categories/${category}/products`);
+        const res = await axiosClient.get(`categories/${appliedFilters.category}/products`);
+        setAllProducts(res);
+        
+        // Apply filters to the data
         const result = res.filter(
           (product) =>
-            product.price.toString() >= fromMoney &&
-            product.price.toString() <= (toMoney === "" ? "999999999" : toMoney)
+            product.price.toString() >= appliedFilters.fromMoney &&
+            product.price.toString() <= (appliedFilters.toMoney === "" ? "999999999" : appliedFilters.toMoney)
         );
         setProducts(result);
       } catch (error) {
@@ -65,10 +78,19 @@ const CategoryPage = () => {
       }
     };
     
-    if (category) {
+    if (appliedFilters.category) {
       getData();
     }
-  }, [reloadData, category, fromMoney, toMoney]);
+  }, [reloadData, appliedFilters]);
+
+  const handleApplyFilters = () => {
+    setAppliedFilters({
+      category,
+      fromMoney,
+      toMoney
+    });
+    setReloadData(prev => prev + 1);
+  };
 
   return (
     <div className="font-jost bg-gray-50 min-h-screen">
@@ -103,10 +125,7 @@ const CategoryPage = () => {
                 </label>
                 <select
                   id="category-select"
-                  onChange={(e) => {
-                    setCategory(e.target.value);
-                    setReloadData(prev => prev + 1);
-                  }}
+                  onChange={(e) => setCategory(e.target.value)}
                   value={category}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
                 >
@@ -149,8 +168,8 @@ const CategoryPage = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setReloadData((prev) => prev + 1)}
-                  className="w-full bg-primary hover:bg-primary-dark text-white bg-blue-900 font-medium py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
+                  onClick={handleApplyFilters}
+                  className="w-full bg-primary hover:bg-primary-dark text-white bg-blue-900 font-medium py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg cursor-pointer"
                 >
                   Apply Filters
                 </button>
@@ -176,7 +195,7 @@ const CategoryPage = () => {
               <>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-gray-800">
-                    {categories.find(c => c.id === parseInt(category))?.name} Products
+                    {categories.find(c => c.id === parseInt(appliedFilters.category))?.name} Products
                   </h2>
                   <p className="text-sm text-gray-500">{products.length} items</p>
                 </div>
@@ -195,7 +214,7 @@ const CategoryPage = () => {
                     setCategory("1");
                     setFromMoney("0");
                     setToMoney("");
-                    setReloadData((prev) => prev + 1);
+                    handleApplyFilters();
                   }}
                   className="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors"
                 >
