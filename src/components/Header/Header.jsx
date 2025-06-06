@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/images/logo.png";
 import AccountSlice from "../../pages/Login/AccountSlice";
 import { getLoginSuccess, quantityItem } from "../../redux/selectors";
@@ -37,6 +37,16 @@ const Header = () => {
   const quantity = useSelector(quantityItem);
   const LoginSuccess = useSelector(getLoginSuccess);
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  // Function to check if a path is active
+  const isActive = (path) => {
+    // Special case for home to handle exact match
+    if (path === "/home") {
+      return location.pathname === "/home" || location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <div className="font-jost">
@@ -85,15 +95,35 @@ const Header = () => {
         <div className="hidden md:flex flex-col md:flex-row max-w-full">
           <Link
             to="/home"
-            className="md:p-6 text-base font-bold cursor-pointer hover:text-orange-500"
+            className={`md:p-6 text-base font-bold cursor-pointer ${
+              isActive("/home") ? "text-orange-500" : "hover:text-orange-500"
+            }`}
           >
             Home
           </Link>
           <Link
-            to="/category/products" // You can adjust this route as needed
-            className="md:p-6 text-base font-bold cursor-pointer hover:text-orange-500"
+            to="/category/products"
+            className={`md:p-6 text-base font-bold cursor-pointer ${
+              isActive("/category") ? "text-orange-500" : "hover:text-orange-500"
+            }`}
           >
             Products
+          </Link>
+          <Link
+            to="/blog"
+            className={`md:p-6 text-base font-bold cursor-pointer ${
+              isActive("/blog") ? "text-orange-500" : "hover:text-orange-500"
+            }`}
+          >
+            Blog
+          </Link>
+          <Link
+            to="/contact"
+            className={`md:p-6 text-base font-bold cursor-pointer ${
+              isActive("/contact") ? "text-orange-500" : "hover:text-orange-500"
+            }`}
+          >
+            Contact Us
           </Link>
         </div>
         <div className="flex flex-row items-center">

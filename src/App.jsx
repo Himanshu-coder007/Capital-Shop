@@ -5,6 +5,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header/Header";
 import Loader from "./components/Loader/Loader";
 import Footer from "./components/Footer/Footer";
+import Blog from "./pages/Blog/Blog";
+import Contactus from "./pages/Contact Us/Contactus";
 
 // ScrollToTop component
 const ScrollToTop = () => {
@@ -78,6 +80,22 @@ function App() {
               element={
                 <Suspense fallback={<Loader />}>
                   <Category />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/blog"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <Blog />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/contact"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <Contactus />
                 </Suspense>
               }
             />
