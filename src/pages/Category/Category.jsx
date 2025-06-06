@@ -9,9 +9,15 @@ const CategoryPage = () => {
   const { id } = useParams();
   const [fromMoney, setFromMoney] = useState("0");
   const [toMoney, setToMoney] = useState("");
-  const [category, setCategory] = useState(id ? id.toString() : "");
+  const [category, setCategory] = useState(id ? id.toString() : "1"); // Default to "1" (Clothes)
   const [reloadData, setReloadData] = useState("1");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([
+    { id: 1, name: "Clothes" },
+    { id: 2, name: "Electronics" },
+    { id: 3, name: "Furniture" },
+    { id: 4, name: "Shoes" },
+    { id: 5, name: "Others" },
+  ]);
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -24,18 +30,6 @@ const CategoryPage = () => {
   ]);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-
-  useEffect(() => {
-    const getCategory = async () => {
-      try {
-        const category = await axiosClient.get('categories?limit=10');
-        setCategories(category);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    getCategory();
-  }, []);
 
   useLayoutEffect(() => {
     document.documentElement.scrollTo(0, 0);
@@ -58,7 +52,7 @@ const CategoryPage = () => {
         setIsLoading(false);
       }
     };
-    if (category && category !== "0") {
+    if (category) {
       getData();
     }
   }, [reloadData, category]);
@@ -66,7 +60,7 @@ const CategoryPage = () => {
   if (localStorage.getItem("test") !== id) {
     localStorage.setItem("test", id || "");
     setReloadData((prep) => prep + 1);
-    setCategory(id || "");
+    setCategory(id || "1"); // Default to "1" (Clothes) if no id
   }
 
   return (
@@ -105,7 +99,6 @@ const CategoryPage = () => {
                 value={category}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
               >
-                <option value="0">All Categories</option>
                 {categories.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.name}
@@ -171,7 +164,7 @@ const CategoryPage = () => {
               <>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-gray-800">
-                    {categories.find(c => c.id === parseInt(category))?.name || "All"} Products
+                    {categories.find(c => c.id === parseInt(category))?.name} Products
                   </h2>
                   <p className="text-sm text-gray-500">{products.length} items</p>
                 </div>
@@ -187,7 +180,7 @@ const CategoryPage = () => {
                 <p className="text-gray-500 mb-6">Try adjusting your filters or select a different category</p>
                 <button
                   onClick={() => {
-                    setCategory("0");
+                    setCategory("1"); // Reset to Clothes
                     setFromMoney("0");
                     setToMoney("");
                     setReloadData((prep) => prep + 1);
