@@ -88,75 +88,77 @@ const CategoryPage = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
-          <div className="w-full lg:w-1/4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="flex items-center mb-6">
-              <FiFilter className="text-primary mr-2" />
-              <h2 className="text-xl font-bold text-gray-800">Filters</h2>
-            </div>
-
-            {/* Category Filter */}
-            <div className="mb-8">
-              <label htmlFor="category-select" className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <select
-                id="category-select"
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setReloadData(prev => prev + 1);
-                }}
-                value={category}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-              >
-                {categories.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Price Filter */}
-            <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-4">Price Range</h3>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex-1">
-                  <label htmlFor="min-price" className="sr-only">Min price</label>
-                  <input
-                    id="min-price"
-                    value={fromMoney}
-                    onChange={(e) => setFromMoney(e.target.value)}
-                    type="number"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                    placeholder="Min"
-                    min="0"
-                  />
-                </div>
-                <span className="text-gray-400">to</span>
-                <div className="flex-1">
-                  <label htmlFor="max-price" className="sr-only">Max price</label>
-                  <input
-                    id="max-price"
-                    value={toMoney}
-                    onChange={(e) => setToMoney(e.target.value)}
-                    type="number"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                    placeholder="Max"
-                    min="0"
-                  />
-                </div>
+          {/* Sidebar Filters - Fixed height container */}
+          <div className="w-full lg:w-1/4">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-24 h-fit max-h-[calc(100vh-120px)] overflow-y-auto">
+              <div className="flex items-center mb-6">
+                <FiFilter className="text-primary mr-2" />
+                <h2 className="text-xl font-bold text-gray-800">Filters</h2>
               </div>
-              <button
-                onClick={() => setReloadData((prev) => prev + 1)}
-                className="w-full bg-primary hover:bg-primary-dark text-white bg-blue-900 font-medium py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
-              >
-                Apply Filters
-              </button>
+
+              {/* Category Filter */}
+              <div className="mb-8">
+                <label htmlFor="category-select" className="block text-sm font-medium text-gray-700 mb-2">
+                  Category
+                </label>
+                <select
+                  id="category-select"
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    setReloadData(prev => prev + 1);
+                  }}
+                  value={category}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                >
+                  {categories.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Price Filter */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-4">Price Range</h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1">
+                    <label htmlFor="min-price" className="sr-only">Min price</label>
+                    <input
+                      id="min-price"
+                      value={fromMoney}
+                      onChange={(e) => setFromMoney(e.target.value)}
+                      type="number"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                      placeholder="Min"
+                      min="0"
+                    />
+                  </div>
+                  <span className="text-gray-400">to</span>
+                  <div className="flex-1">
+                    <label htmlFor="max-price" className="sr-only">Max price</label>
+                    <input
+                      id="max-price"
+                      value={toMoney}
+                      onChange={(e) => setToMoney(e.target.value)}
+                      type="number"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                      placeholder="Max"
+                      min="0"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={() => setReloadData((prev) => prev + 1)}
+                  className="w-full bg-primary hover:bg-primary-dark text-white bg-blue-900 font-medium py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
+                >
+                  Apply Filters
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Products Grid */}
+          {/* Products Grid - Independent height */}
           <div className="w-full lg:w-3/4">
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
