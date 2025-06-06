@@ -9,8 +9,8 @@ const CategoryPage = () => {
   const { id } = useParams();
   const [fromMoney, setFromMoney] = useState("0");
   const [toMoney, setToMoney] = useState("");
-  const [category, setCategory] = useState(id ? id.toString() : "1"); // Default to "1" (Clothes)
-  const [reloadData, setReloadData] = useState("1");
+  const [category, setCategory] = useState("1"); // Initialize with default value
+  const [reloadData, setReloadData] = useState(0);
   const [categories, setCategories] = useState([
     { id: 1, name: "Clothes" },
     { id: 2, name: "Electronics" },
@@ -36,6 +36,18 @@ const CategoryPage = () => {
   }, [location.pathname]);
 
   useEffect(() => {
+    // Set the initial category based on URL param or default
+    const initialCategory = id || "1";
+    setCategory(initialCategory);
+    
+    // Only trigger reload if the stored value is different
+    if (localStorage.getItem("test") !== initialCategory) {
+      localStorage.setItem("test", initialCategory);
+      setReloadData(prev => prev + 1);
+    }
+  }, [id]);
+
+  useEffect(() => {
     const getData = async () => {
       setIsLoading(true);
       try {
@@ -52,16 +64,11 @@ const CategoryPage = () => {
         setIsLoading(false);
       }
     };
+    
     if (category) {
       getData();
     }
-  }, [reloadData, category]);
-
-  if (localStorage.getItem("test") !== id) {
-    localStorage.setItem("test", id || "");
-    setReloadData((prep) => prep + 1);
-    setCategory(id || "1"); // Default to "1" (Clothes) if no id
-  }
+  }, [reloadData, category, fromMoney, toMoney]);
 
   return (
     <div className="font-jost bg-gray-50 min-h-screen">
@@ -95,7 +102,10 @@ const CategoryPage = () => {
               </label>
               <select
                 id="category-select"
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setReloadData(prev => prev + 1);
+                }}
                 value={category}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all"
               >
@@ -138,7 +148,7 @@ const CategoryPage = () => {
                 </div>
               </div>
               <button
-                onClick={() => setReloadData((prep) => prep + 1)}
+                onClick={() => setReloadData((prev) => prev + 1)}
                 className="w-full bg-primary hover:bg-primary-dark text-white bg-blue-900 font-medium py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
               >
                 Apply Filters
@@ -180,10 +190,10 @@ const CategoryPage = () => {
                 <p className="text-gray-500 mb-6">Try adjusting your filters or select a different category</p>
                 <button
                   onClick={() => {
-                    setCategory("1"); // Reset to Clothes
+                    setCategory("1");
                     setFromMoney("0");
                     setToMoney("");
-                    setReloadData((prep) => prep + 1);
+                    setReloadData((prev) => prev + 1);
                   }}
                   className="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors"
                 >
