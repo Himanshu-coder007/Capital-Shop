@@ -10,7 +10,6 @@ const Card = (props) => {
   const LoginSuccess = useSelector(getLoginSuccess);
   const [isLiked, setIsLiked] = useState(false);
 
-  // Check if product is liked on component mount
   useEffect(() => {
     const likedProducts = JSON.parse(localStorage.getItem("likedProducts") || "[]");
     setIsLiked(likedProducts.includes(props.product.id));
@@ -67,13 +66,13 @@ const Card = (props) => {
   };
 
   return (
-    <div className="rounded p-4 shadow-xl group overflow-hidden cursor-pointer">
-      <div className="max-w-full overflow-hidden relative">
+    <div className="rounded p-4 shadow-xl group overflow-hidden cursor-pointer h-[500px] w-full flex flex-col">
+      <div className="w-full h-64 overflow-hidden relative flex-shrink-0">
         <Link to={`/product/${props.product.id}`}>
           <img
             src={props.product.images[0]}
             alt={props.product.description}
-            className="max-w-[100%] min-h-[216px] group-hover:scale-110 transition-all duration-700"
+            className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
           />
         </Link>
         <div className="absolute translate-y-[999px] group-hover:translate-y-0 w-full bg-transparent bottom-0 px-[30%] py-3 transition-all duration-500 ease-out">
@@ -119,12 +118,12 @@ const Card = (props) => {
           </div>
         </div>
       </div>
-      <div className="py-6">
-        <Link to={`/product/${props.product.id}`}>
-          <p className="text-lg text-black group-hover:text-primary text-center pt-4 pb-2 transition-all duration-500">
+      <div className="py-6 flex-grow flex flex-col">
+        <Link to={`/product/${props.product.id}`} className="flex-grow flex flex-col">
+          <p className="text-lg text-black group-hover:text-primary text-center pt-4 pb-2 transition-all duration-500 line-clamp-2 h-[3.5rem] flex items-center justify-center">
             {props.product.title}
           </p>
-          <p className="text-gray-400 font-medium text-center group-hover:text-gray-800 transition-all duration-500">
+          <p className="text-gray-400 font-medium text-center group-hover:text-gray-800 transition-all duration-500 mt-auto">
             {"$" + props.product.price}
           </p>
         </Link>

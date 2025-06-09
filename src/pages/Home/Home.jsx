@@ -113,7 +113,7 @@ const Home = () => {
         >
           {products.map((item) => (
             <SwiperSlide key={item.id}>
-              <div className="py-7">
+              <div className="py-7 h-full">
                 <Card product={item} />
               </div>
             </SwiperSlide>
@@ -159,7 +159,7 @@ const Home = () => {
         >
           {products.map((item) => (
             <SwiperSlide key={item.id}>
-              <div className="py-7">
+              <div className="py-7 h-full">
                 <Card product={item} />
               </div>
             </SwiperSlide>
