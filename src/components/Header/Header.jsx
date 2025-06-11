@@ -52,10 +52,30 @@ const Header = () => {
     <div className="font-jost">
       <div className="hidden md:flex md:px-20 py-3 border-b border-gray-200 flex-row justify-between text-sm transition-all">
         <div className="flex gap-8">
-          <p className="hover:text-primary cursor-pointer hover:text-orange-500">About Us</p>
-          <p className="hover:text-primary cursor-pointer hover:text-orange-500">Privacy</p>
-          <p className="hover:text-primary cursor-pointer hover:text-orange-500">FAQ</p>
-          <p className="hover:text-primary cursor-pointer hover:text-orange-500">Careers</p>
+          <Link
+            to="/about"
+            className="hover:text-primary cursor-pointer hover:text-orange-500"
+          >
+            About Us
+          </Link>
+          <Link
+            to="/privacy"
+            className="hover:text-primary cursor-pointer hover:text-orange-500"
+          >
+            Privacy
+          </Link>
+          <Link
+            to="/faq"
+            className="hover:text-primary cursor-pointer hover:text-orange-500"
+          >
+            FAQ
+          </Link>
+          <Link
+            to="/careers"
+            className="hover:text-primary cursor-pointer hover:text-orange-500"
+          >
+            Careers
+          </Link>
         </div>
         <div className="flex items-center">
           <p className="px-5 border-r border-gray-200 cursor-pointer hover:text-orange-500">
@@ -104,7 +124,9 @@ const Header = () => {
           <Link
             to="/category/products"
             className={`md:p-6 text-base font-bold cursor-pointer ${
-              isActive("/category") ? "text-orange-500" : "hover:text-orange-500"
+              isActive("/category")
+                ? "text-orange-500"
+                : "hover:text-orange-500"
             }`}
           >
             Products

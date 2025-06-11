@@ -1,3 +1,4 @@
+// src/App.js
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -26,6 +27,10 @@ const Category = lazy(() => import("./pages/Category/Category"));
 const ProductDetail = lazy(() => import("./pages/Product Details/ProductDetail"));
 const Register = lazy(() => import("./pages/Login/Register"));
 const Login = lazy(() => import("./pages/Login/Login"));
+const AboutUs = lazy(() => import("./pages/AboutUs/AboutUs"));
+const Privacy = lazy(() => import("./pages/Privacy/Privacy"));
+const FAQ = lazy(() => import("./pages/FAQ/FAQ"));
+const Careers = lazy(() => import("./pages/Careers/Careers"));
 
 function App() {
   const RequireAuth = ({ children }) => {
@@ -53,7 +58,7 @@ function App() {
         />
         
         <Header />
-        <ScrollToTop /> {/* Add ScrollToTop component here */}
+        <ScrollToTop />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
@@ -96,6 +101,38 @@ function App() {
               element={
                 <Suspense fallback={<Loader />}>
                   <Contactus />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <AboutUs />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/privacy"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <Privacy />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/faq"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <FAQ />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/careers"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <Careers />
                 </Suspense>
               }
             />
