@@ -26,7 +26,7 @@ const CartPage = () => {
             name: res.title,
             price: res.price,
             quantity: element.quantity,
-            image: res.image, // assuming the API returns an image
+            image: res.image,
           };
         });
         
@@ -141,13 +141,13 @@ const CartPage = () => {
                     <button
                       onClick={() => {
                         dispatch(
-                          CartSlice.actions.removeItemFromCart({
+                          CartSlice.actions.removeFromCart({
                             id: item.id.toString(),
                           })
                         );
                         toast.info(`${item.name} removed from cart`);
                       }}
-                      className="text-sm text-amber-600 hover:text-amber-800 mt-1"
+                      className="text-sm text-amber-600 hover:text-amber-800 mt-1 cursor-pointer"
                     >
                       Remove
                     </button>
